@@ -8,7 +8,7 @@ init_linux:
 	python -m venv my_env
 
 run_venv_windows:
-	.\.venv\Scripts\activate	
+	cmd .\.venv\Scripts\activate
 	python main.py
 run_venv_linux:
 	source my_env/Scripts/activate	

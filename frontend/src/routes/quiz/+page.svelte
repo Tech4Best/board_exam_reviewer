@@ -4,93 +4,10 @@
 	import CardHeader from "$lib/components/ui/card/card-header.svelte";
 	import CardTitle from "$lib/components/ui/card/card-title.svelte";
 	import Card from "$lib/components/ui/card/card.svelte";
-    interface Result {
-        question: Question;
-        chosen_answer: Option;
-        correct_answer: Option;
-        is_correct: boolean;
-    }
+    import type { Question, Result, Option, Content}  from "$lib/types/questions"
+    import demoQuestions  from "$lib/demoQuestions";
 
-    
-    interface RichText {
-        
-    }
-
-
-interface LatexContent {
-  type: 'latex';
-  value: string; // The LaTeX string
-}
-
-interface ImageContent {
-  type: 'image';
-  src: string; // URL or base64 data
-  alt?: string; // Alternative text
-  width?: number;
-  height?: number;
-}
-
-interface MarkdownContent {
-  type: 'markdown';
-  value: string; // The Markdown string
-}
-
-type RichTextContent = LatexContent | ImageContent | MarkdownContent ;
-
-    interface RichText {
-        children: RichTextContent[];
-    }
-
-    type Content = RichText | string;
-    interface Question {
-        id:string;
-        content:RichText;
-        options: Option[];
-        answer: Option;
-    }
-
-    interface Option {
-        id: string;
-        content: Content;
-    }
-    const questions: Question[] = $state([
-        {id: "1", content:"What is the Capital of Egypt", 
-            options:[
-                {id:"0001", content:"Cairo"},
-                {id:"0002", content:"Venice"},
-                {id:"0003", content:"Montaigne"},
-                {id:"0004", content:"Charlemagne"},
-            ],
-            answer: {id:"0001", content:"Cairo"}
-        },
-        {id: "1", content:"What is the Capital of Egypt", 
-            options:[
-                {id:"0001", content:"Cairo"},
-                {id:"0002", content:"Venice"},
-                {id:"0003", content:"Montaigne"},
-                {id:"0004", content:"Charlemagne"},
-            ],
-            answer: {id:"0001", content:"Cairo"}
-        },
-        {id: "2", content:"What is the Capital of Egypt", 
-            options:[
-                {id:"0001", content:"Cairo"},
-                {id:"0002", content:"Venice"},
-                {id:"0003", content:"Montaigne"},
-                {id:"0004", content:"Charlemagne"},
-            ],
-            answer: {id:"0001", content:"Cairo"}
-        },
-        {id: "3", content:"What is the Capital of Egypt", 
-            options:[
-                {id:"0001", content:"Cairo"},
-                {id:"0002", content:"Venice"},
-                {id:"0003", content:"Montaigne"},
-                {id:"0004", content:"Charlemagne"},
-            ],
-            answer: {id:"0001", content:"Cairo"}
-        },
-    ])
+    const questions = $state(demoQuestions)
     let questionCounter: number = $state(1);
     let results: Result[] = $state([]);
     let showResults: boolean = $state(false);
@@ -120,11 +37,13 @@ type RichTextContent = LatexContent | ImageContent | MarkdownContent ;
     {#if !showResults}
         <h2>Question {questionCounter} / {questions.length}</h2>
         <Card>
-            <CardTitle>Q: {questions[questionCounter-1].content}</CardTitle>
+            <CardTitle>Q: 
+                {@render contentWriter(questions[questionCounter-1].content)}
+            </CardTitle>
             <CardContent>
                 {#each questions[questionCounter-1].options as option}
                     <Button onclick={()=>verifyAnswer(questions[questionCounter-1], option)}>
-                        {option.content}
+                        {@render contentWriter(option.content)}
                     </Button>
                     <br />
                 {/each}
@@ -139,12 +58,26 @@ type RichTextContent = LatexContent | ImageContent | MarkdownContent ;
             <Card>
                 <CardHeader>Question # {index +1}</CardHeader>  
                 <CardContent>
-                    <p>{result.question.content}</p>
+                    {@render contentWriter(result.question.content)}
                     <p>{result.is_correct? "Correct": "Incorrect"}</p>
-                    <p>Your Answer: {result.chosen_answer.content}</p>
-                    <p>Correct Answer: {result.correct_answer.content}</p>
+                    <p>Your Answer:</p>
+                    {@render contentWriter(result.chosen_answer.content)}
+                    <p>Correct Answer: </p>
+                    {@render contentWriter(result.correct_answer.content)}
                 </CardContent>
             </Card> 
         {/each}
     {/if}
 </div>
+
+{#snippet contentWriter(content: Content)}
+    {#each content as children}
+        {#if children.type == "latex"}
+            <p>{children.value }</p>
+        {:else if children.type == "image"}
+            <img src={children.src} alt={children.alt}/>
+        {:else} <!-- Markdown --> 
+            <p> {children.value }</p>
+        {/if}
+    {/each}
+{/snippet}
