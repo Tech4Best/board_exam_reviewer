@@ -1,9 +1,3 @@
-export interface Course {
-    id:string,
-    title:string,
-    Subjects: Subject[],
-}
-
 export const courseList = [
     {
         id:"CIE",
