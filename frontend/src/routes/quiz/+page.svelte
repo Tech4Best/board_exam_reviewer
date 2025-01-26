@@ -4,8 +4,9 @@
 	import CardHeader from "$lib/components/ui/card/card-header.svelte";
 	import CardTitle from "$lib/components/ui/card/card-title.svelte";
 	import Card from "$lib/components/ui/card/card.svelte";
-    import type { Question, Result, Option, Content}  from "$lib/types/questions"
-    import demoQuestions  from "$lib/demoQuestions";
+    import type { Question, Result, Option, }  from "$lib/types/questions";
+    import type { Content } from "$lib/types/content";
+    import demoQuestions  from "$lib/data/demoQuestions";
 
     const questions = $state(demoQuestions)
     let questionCounter: number = $state(1);
@@ -33,7 +34,7 @@
         nextQuestion()
     }
 </script>
-<div class="mx-auto w-96">
+<div class="mx-auto w-80">
     {#if !showResults}
         <h2>Question {questionCounter} / {questions.length}</h2>
         <Card>
