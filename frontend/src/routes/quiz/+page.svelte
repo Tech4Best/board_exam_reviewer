@@ -4,28 +4,47 @@
 	import CardHeader from "$lib/components/ui/card/card-header.svelte";
 	import CardTitle from "$lib/components/ui/card/card-title.svelte";
 	import Card from "$lib/components/ui/card/card.svelte";
-    import type { Question, Result, Option, }  from "$lib/types/questions";
+    import type { Question, Result, Option, Remarks}  from "$lib/types/questions";
     import type { Content } from "$lib/types/content";
     import demoQuestions  from "$lib/data/demoQuestions";
 
     const questions = $state(demoQuestions)
     let questionCounter: number = $state(1);
     let results: Result[] = $state([]);
+
+    let remarks: Remarks = $derived.by(()=> {
+        return {
+            dateStarted: new Date(),
+            dateFinished: null,
+            results: results,
+        }
+    })
+
     let showResults: boolean = $state(false);
+    const endQuiz = () => {
+        showResults = true;
+        const JSONRemarks = JSON.stringify(remarks);
+        localStorage.setItem("remarks",JSONRemarks)
+        console.log(localStorage.getItem("remarks"))
+
+    }
     const nextQuestion = () => {
         if(questionCounter>= questions.length){
-            showResults = true;
+            endQuiz();
             return;
         }
         questionCounter+=1;
     }
     const verifyAnswer = (question:Question,answer:Option) =>{
         results.push({
+            dateAsked: new Date(),
+            dateFinished: new Date(),
             question:question,
             chosen_answer:answer,
             correct_answer:question.answer,
             is_correct:question.answer.id === answer.id,
         })
+
         if(question.answer.id === answer.id) {
             console.log("correct")
         }else {
@@ -38,8 +57,7 @@
     {#if !showResults}
         <h2>Question {questionCounter} / {questions.length}</h2>
         <Card>
-            <CardTitle>Q: 
-                {@render contentWriter(questions[questionCounter-1].content)}
+            <CardTitle>Q: {@render contentWriter(questions[questionCounter-1].content)}
             </CardTitle>
             <CardContent>
                 {#each questions[questionCounter-1].options as option}
