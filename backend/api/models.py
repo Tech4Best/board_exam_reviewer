@@ -73,7 +73,21 @@ class Question(ContentMixin, models.Model):
         return f"Question {self.id}"
 
 class Subject(models.Model):
-    name = models.CharField(max_length=255)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    title = models.CharField(max_length=255)
+    coverage = models.ForeignKey(
+        'Coverage',
+        on_delete=models.CASCADE,
+        related_name='subjects',
+        null=True
+    )
+
+    def __str__(self):
+        return self.name
+
+class Coverage(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    title = models.CharField(max_length=255)
     exam = models.ForeignKey(
         'Exam',
         on_delete=models.CASCADE,
@@ -83,6 +97,7 @@ class Subject(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Exam(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
