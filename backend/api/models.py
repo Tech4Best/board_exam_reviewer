@@ -83,7 +83,7 @@ class Subject(models.Model):
     )
 
     def __str__(self):
-        return self.name
+        return self.title
 
 class Coverage(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -96,7 +96,7 @@ class Coverage(models.Model):
     )
 
     def __str__(self):
-        return self.name
+        return self.title
 
 
 class Exam(models.Model):
