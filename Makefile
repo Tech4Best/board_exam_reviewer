@@ -1,3 +1,21 @@
+.ONESHELL:
+frontend:
+	cd ./frontend
+	npm run dev
+
+frontend_build:
+	cd ./frontend
+	npm run build
+
+frontend_serve:
+	cd ./frontend
+	npm run build
+	npm run preview
+
+backend:
+	cd ./backend
+	python manage.py runserver
+
 say_hello:
 	echo "Hello world"
 
@@ -6,12 +24,6 @@ init_windows:
 
 init_linux:
 	python -m venv my_env
-
-run_venv_windows:
-	cmd .\.venv\Scripts\activate
-	python main.py
-run_venv_linux:
-	source my_env/Scripts/activate	
 
 run_server:
 	python main.py
