@@ -3,59 +3,16 @@ import uuid
 import json
 from django.core.exceptions import ValidationError
 
-class ContentMixin(models.Model):
-    """Abstract base class for content fields"""
-    _content = models.TextField(db_column='content')
-
-    class Meta:
-        abstract = True
-
-    @property
-    def content(self):
-        """Deserialize JSON content from TextField"""
-        try:
-            return json.loads(self._content)
-        except (json.JSONDecodeError, TypeError):
-            return []
-
-    @content.setter
-    def content(self, value):
-        """Serialize content to JSON for storage"""
-        self._content = json.dumps(value)
-
-    def clean(self):
-        """Validate content structure"""
-        try:
-            content = self.content
-        except json.JSONDecodeError:
-            raise ValidationError("Invalid JSON content")
-
-        if not isinstance(content, list):
-            raise ValidationError("Content must be an array")
-        
-        for item in content:
-            if not isinstance(item, dict) or 'type' not in item:
-                raise ValidationError("Each content item must be an object with a type")
-            
-            if item['type'] not in ['latex', 'image', 'markdown']:
-                raise ValidationError("Invalid content type")
-            
-            if item['type'] == 'latex' or item['type'] == 'markdown':
-                if 'value' not in item or not isinstance(item['value'], str):
-                    raise ValidationError(f"{item['type']} content must have a string value")
-            
-            elif item['type'] == 'image':
-                if 'src' not in item or not isinstance(item['src'], str):
-                    raise ValidationError("Image content must have a string src")
-
-class Option(ContentMixin, models.Model):
+class Option(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    content = models.TextField(default="NULL")
     
     def __str__(self):
         return f"Option {self.id}"
 
-class Question(ContentMixin, models.Model):
+class Question(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    content = models.TextField(default="NULL")
     options = models.ManyToManyField(Option, related_name='questions')
     answer = models.ForeignKey(
         Option,
@@ -68,6 +25,22 @@ class Question(ContentMixin, models.Model):
         related_name='questions',
         null=True
     )
+
+    def clean(self):
+        super().clean()
+        # We can only validate if we have an ID (object is saved) and an answer
+        if self.id and self.answer:
+            # Get all valid options for this question
+            valid_options = self.options.all()
+            # Check if the answer is among the valid options
+            if self.answer not in valid_options:
+                raise ValidationError({
+                    'answer': 'The answer must be one of the options associated with this question.'
+                })
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.clean()  # Run validation after save to handle M2M relationships
 
     def __str__(self):
         return f"Question {self.id}"
