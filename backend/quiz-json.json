@@ -1,0 +1,329 @@
+{
+  "title": "Certified Industrial Engineer (CIE) Mock Examination Part 1 2018",
+  "subjects": [
+     {
+      "title": "Mechanics, Engineering Mathematics",
+      "id": "MECH",
+      "questions": [
+        {
+          "id": 1,
+          "question": "A 400 lb block is resting on a rough horizontal surface for which the coefficient of friction is 0.40. Determine the force P required to cause motion to impend if applied to the block horizontally.",
+          "options": {
+            "a": "100",
+            "b": "120",
+            "c": "140",
+            "d": "160"
+          },
+          "correctAnswer": "d"
+        },
+        {
+          "id": 2,
+          "question": "Refer to problem no. 1, determine the force P required to cause motion to impend if applied to the block downward at 30° with the horizontal?",
+          "options": {
+            "a": "220",
+            "b": "240",
+            "c": "260",
+            "d": "280"
+          },
+          "correctAnswer": "d"
+        },
+        {
+          "id": 3,
+          "question": "A woman exerts a force of 500 N straight up to lift a 35 kg basket. What is the acceleration of the basket?",
+          "options": {
+            "a": "4.5",
+            "b": "5.5",
+            "c": "6.7",
+            "d": "7.7"
+          },
+          "correctAnswer": "a"
+        },
+        {
+          "id": 4,
+          "question": "A 49-N block is pulled by a horizontal force of 50.0 N along a rough horizontal surface at a constant acceleration of 6 m/s/s. What is the coefficient of friction?",
+          "options": {
+            "a": "20",
+            "b": "25",
+            "c": "30",
+            "d": "35"
+          },
+          "correctAnswer": "c"
+        },
+        {
+          "id": 5,
+          "question": "A block is pulled by a string that makes an angle of 25° to the horizontal. If the mass of the block is 12.0 kg and the coefficient of friction is 0.25, what force would keep the block moving at a constant velocity?",
+          "options": {
+            "a": "31",
+            "b": "29",
+            "c": "27",
+            "d": "25"
+          },
+          "correctAnswer": "b"
+        }
+      ]
+    },
+     {
+      "title":"Chemistry, Thermodynamics, Engineering Sciences",
+      "questions": [
+        {
+          "id": 6,
+          "question": "When 5.0 moles of O2 are confined to a 24 liter container at 87 °C, the pressure is 6.0 atm. If the oxygen is allowed to isothermally expand to 36 liters, what is the new pressure?",
+          "options": {
+            "a": "10",
+            "b": "8",
+            "c": "6",
+            "d": "4"
+          },
+          "correctAnswer": "d"
+        },
+        {
+          "id": 7,
+          "question": "Fill in the blank to balance the equation: 3 CaCl2 + 2 Na3PO4 → Ca3(PO4)2 + ___ NaCl is:",
+          "options": {
+            "a": "3",
+            "b": "4",
+            "c": "6",
+            "d": "8"
+          },
+          "correctAnswer": "c"
+        },
+        {
+          "id": 8,
+          "question": "Determine the molarity of a solution made by dissolving 20.0 g of NaOH in sufficient water to yield a 482 cm³ solution.",
+          "options": {
+            "a": "4.07",
+            "b": "3.03",
+            "c": "2.06",
+            "d": "1.04"
+          },
+          "correctAnswer": "d"
+        },
+        {
+          "id": 9,
+          "question": "A solution is prepared by mixing 1.0 grams of benzene (C6H6) in 100 g of water to create a solution total volume of 100 ml. Calculate the molarity.",
+          "options": {
+            "a": "1.28 moles/liter",
+            "b": "2.17 moles/liter",
+            "c": "3.05 moles/liter",
+            "d": "4.13 moles/liter"
+          },
+          "correctAnswer": "a"
+        },
+        {
+          "id": 10,
+          "question": "Suppose you had 58.44 grams of NaCl and you dissolved it in exactly 2.00 L of solution. What would be the molarity of the solution?",
+          "options": {
+            "a": "0.750 M",
+            "b": "0.500 M",
+            "c": "0.250 M",
+            "d": "0.125 M"
+          },
+          "correctAnswer": "b"
+        },
+        {
+          "id": 11,
+          "question": "How many liters of water can 6.7 L of ethane boil? The initial temperature and pressure of the ethane and water is 0.95 bar and 25 °C.",
+          "options": {
+            "a": "4.15 L",
+            "b": "3.16 L",
+            "c": "2.17 L",
+            "d": "1.18 L"
+          },
+          "correctAnswer": "d"
+        },
+        {
+          "id": 12,
+          "question": "A balloon filled with gas expands its volume by 2.0 L. If the pressure outside the balloon is 0.93 bar and the energy change of the gas is 450J, how much heat did the surroundings give the balloon?",
+          "options": {
+            "a": "636 J",
+            "b": "734 J",
+            "c": "832 J",
+            "d": "930 J"
+          },
+          "correctAnswer": "a"
+        },
+        {
+          "id": 13,
+          "question": "There is a house hold heater that operates at 4 V and at 35 Ω and is used to heat up 15g of copper wire. The specific heat capacity of copper is 24.440 J/mol/K. How much time is required to increase the temperature from 25 °C to 69 °C?",
+          "options": {
+            "a": "34512 secs.",
+            "b": "32891 secs",
+            "c": "37541 secs",
+            "d": "35296 secs."
+          },
+          "correctAnswer": "d"
+        },
+        {
+          "id": 14,
+          "question": "Given a carnot engine that absorbs 750J of energy from a tank of hot water with a final temperature of 300K, what is the initial temperature if 600J of work was done by the system?",
+          "options": {
+            "a": "1000K",
+            "b": "1500K",
+            "c": "2000K",
+            "d": "2500K"
+          },
+          "correctAnswer": "b"
+        },
+        {
+          "id": 15,
+          "question": "If ice has a density of , then what is the volume of 5,000 g of ice?",
+          "options": {
+            "a": "4.3 m³",
+            "b": "5.4 m³",
+            "c": "6.2 m³",
+            "d": "7.1 m³"
+          },
+          "correctAnswer": "b"
+        }
+      ]
+    },
+    {
+      "title":"Physics, Elementary Electrical Engineering, Environmental Engineering",
+      "questions": [
+        {
+          "id": 16,
+          "question": "Operating principle of cyclone separator is based on the action of __________ dust particles.",
+          "options": {
+            "a": "centrifugal force on",
+            "b": "diffusion of",
+            "c": "gravitational force on",
+            "d": "electrostatic force on"
+          },
+          "correctAnswer": "a"
+        },
+        {
+          "id": 17,
+          "question": "Turbidity of water is an indication of the presence of",
+          "options": {
+            "a": "floating solids",
+            "b": "dissolved solids",
+            "c": "suspended inorganic matter",
+            "d": "dissolved gases"
+          },
+          "correctAnswer": "c"
+        },
+        {
+          "id": 18,
+          "question": "During which of the following operating conditions of an automobile, carbon monoxide content in the exhaust gas is maximum?",
+          "options": {
+            "a": "acceleration",
+            "b": "cruising",
+            "c": "idle running",
+            "d": "deacceleration"
+          },
+          "correctAnswer": "c"
+        },
+        {
+          "id": 19,
+          "question": "Which is a secondary air pollutant?",
+          "options": {
+            "a": "Photochemical smog",
+            "b": "Nitrogen dioxide",
+            "c": "Sulphur dioxide",
+            "d": "Dust particles"
+          },
+          "correctAnswer": "a"
+        },
+        {
+          "id": 20,
+          "question": "Tolerable limit of nitrogen oxides in air is __________ ppm.",
+          "options": {
+            "a": "0.1",
+            "b": "1",
+            "c": "5",
+            "d": "25"
+          },
+          "correctAnswer": "c"
+        }
+      ]
+    },
+    {
+      "title":"Engineering Ethics",
+      "id": "ETHICS",
+      "questions": [
+        {
+          "id": 41,
+          "question": "You and your roommate are both enrolled in the same class. Your roommate spent the weekend partying and did not do the homework that is due on Monday. You did the homework, and your roommate asks to see it. You are afraid he/she will just copy it and turn it in as his/her own work. What are you ethically obligated to do?",
+          "options": {
+            "a": "Show your roommate the homework.",
+            "b": "Show the homework but ask your roommate not to copy it.",
+            "c": "Show the homework and tell the roommate that if the homework is copied, you will tell the professor.",
+            "d": "Refuse to show the homework.",
+            "e": "Refuse to show the homework but offer to spend time tutoring the roommate."
+          },
+          "correctAnswer": "e"
+        },
+        {
+          "id": 42,
+          "question": "Engineer A is asked by the county to perform a feasibility study and make recommendations concerning location of a new power facility in the county. Two parcels of land have been identified by the county as the 'candidates' for facility sites. Land 1 is undeveloped and owned by an individual who plans to build later. Land 2 is owned by Engineer A, is developed. Engineer A discloses that he is the owner of the second parcel of land. The county did not object to having Engineer A perform the feasibility study. A performs the study and recommends that the county build the facility on the undeveloped parcel of land (option 1) because it is a better location for the power facility from an engineering standpoint, and it would be less costly for the county to acquire. Was it ethical for Engineer A to perform a feasibility study and make recommendations given all considerations?",
+          "options": {
+            "a": "Yes",
+            "b": "No"
+          },
+          "correctAnswer": "b"
+        }
+      ]
+    }
+  ],
+"_comment":{
+  "title":"Engineering Management",
+  "id": "MGMT",
+  "questions": [
+    {
+      "id": 31,
+      "question": "A company spends considerable amount on publicity to promote sales. This expenditure in break-even chart is shown below the",
+      "options": {
+        "a": "Fixed cost line",
+        "b": "Variable cost line",
+        "c": "Total cost line",
+        "d": "Sales revenue line"
+      },
+      "correctAnswer": "b"
+    },
+    {
+      "id": 32,
+      "question": "In the cost structure of a product, the selling price is determined by the factors such as",
+      "options": {
+        "a": "Sales turn over",
+        "b": "Lowest competitive price",
+        "c": "Various elements of the cost",
+        "d": "All of the above"
+      },
+      "correctAnswer": "d"
+    },
+    {
+      "id": 33,
+      "question": "Merit Rating is the method of determining worth of",
+      "options": {
+        "a": "A job",
+        "b": "An individual employee",
+        "c": "A particular division in workshop",
+        "d": "Machine"
+      },
+      "correctAnswer": "b"
+    },
+    {
+      "id": 34,
+      "question": "In manufacturing management, the term 'Dispatching' is used to describe",
+      "options": {
+        "a": "Dispatch of sales order",
+        "b": "Dispatch of factory mail",
+        "c": "Dispatch of finished product of the user",
+        "d": "Dispatch of work orders through shop floor"
+      },
+      "correctAnswer": "d"
+    },
+    {
+      "id": 35,
+      "question": "The wastage of material in the store is taken into account by the following method in the evaluation of the material issued from the store",
+      "options": {
+        "a": "Inflated system",
+        "b": "Primary cost method",
+        "c": "Current value method",
+        "d": "Fixed price method"
+      },
+      "correctAnswer": "a"
+    }
+  ]
+  }
+}
