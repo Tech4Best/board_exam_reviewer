@@ -27,21 +27,8 @@ class Question(models.Model):
         null=True
     )
 
-    def clean(self):
-        super().clean()
-        # We can only validate if we have an ID (object is saved) and an answer
-        if self.id and self.answer:
-            # Get all valid options for this question
-            valid_options = self.options.all()
-            # Check if the answer is among the valid options
-            if self.answer not in valid_options:
-                raise ValidationError({
-                    'answer': 'The answer must be one of the options associated with this question.'
-                })
-
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        self.clean()  # Run validation after save to handle M2M relationships
 
     def __str__(self):
         return f"Question {self.id}"
