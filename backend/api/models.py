@@ -1,23 +1,24 @@
 from django.db import models
 import uuid
-import json
 from django.core.exceptions import ValidationError
 
 class Option(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    content = models.TextField(default="NULL")
+    title = models.TextField(null=True)
+    content = models.TextField(default="")
     
     def __str__(self):
-        return f"Option {self.id}"
+        return f"Option {self.title}"
 
 class Question(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    content = models.TextField(default="NULL")
+    content = models.TextField(default="")
     options = models.ManyToManyField(Option, related_name='questions')
     answer = models.ForeignKey(
         Option,
         on_delete=models.PROTECT,
-        related_name='correct_for_questions'
+        related_name='correct_for_questions',
+        null=True
     )
     subject = models.ForeignKey(
         'Subject',
