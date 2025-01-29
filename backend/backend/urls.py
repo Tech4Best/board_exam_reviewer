@@ -18,16 +18,18 @@ from django.contrib import admin
 from django.urls import include,path
 from rest_framework import routers
 from backend import views
+from api.urls import apirouter
 from django.conf import settings
 from django.conf.urls.static import static
 
 router = routers.DefaultRouter()
 
-router.register(r'users',views.UserViewSet)
+router.register(r'all',views.UserViewSet)
 router.register(r'groups',views.GroupViewSet)
 
 urlpatterns = [
-    path('',include(router.urls)),
+    path('users/',include(router.urls)),
+    path('api/', include(apirouter.urls)),
     path('summernote/', include('django_summernote.urls')),
     path('admin/', admin.site.urls),
 ]
