@@ -20,7 +20,6 @@
 </script>
 <div class="mx-auto w-80">
     <h1 class="text-2xl font-semibold" >Configure Quiz</h1>
-
     <div class="">
         <Select.Root  type="single" name="favoriteFruit" bind:value >
             <Select.Trigger >
