@@ -1,14 +1,18 @@
 <script lang="ts">
-
     import type { PageProps } from './$types'
     import { env } from '$env/dynamic/public'; // Import private environment variables
+	import Button from '$lib/components/ui/button/button.svelte';
+	import { goto } from '$app/navigation';
+
 	let { data }: PageProps = $props();
-    const coverages = data
-    console.log(data)
+
+
+    let coverages: any[] = $state([]) 
+
     let subjects: any = $state([]);
 
     $effect(()=>{
-        coverages.exams.forEach(async(coverage: any)=> {
+        data.exams.forEach(async(coverage: any)=> {
             const API_URL = env.PUBLIC_API_URL+'api/subject/?coverage_id='+coverage.id; 
             try {
                 const res = await fetch(
@@ -24,10 +28,11 @@
                 const subject = await res.json();
 
                 console.log('ID: '+coverage.id,subject)
+                coverages.push({
+                    title:coverage.title,
+                    subjects:subject.results,
+                })
 
-                subjects = [...subjects, ...subject.results]
-
-                subject
             } catch (error) {
                 console.error('Error fetching exams:', error);
                 throw error; 
@@ -36,10 +41,19 @@
     })
 </script>
 <div>
-    <p class="4xl font-semibold">
+    <p class="text-2xl">Home</p>
+    <Button onclick={()=>{goto('exams/all/')}}>
+        Start Exams
+    </Button>
+    <p class="text-2xl font-semibold">
         Subjects
     </p>
-    {#each subjects as subject}
-        <p>{subject.title}</p> 
+    {#each coverages as coverage}
+        <p class="text-xl font-semibold">
+            {coverage.title}
+        </p>
+            {#each coverage.subjects as subject}
+                <p>{subject.title}</p> 
+            {/each}
     {/each}
 </div>
