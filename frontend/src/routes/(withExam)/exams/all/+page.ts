@@ -8,7 +8,7 @@ export const load: PageLoad = async () => {
     if(!chosenExam === null && !(chosenExam === "")){
         redirect(302,'/')
     }else{
-        const API_URL = env.PUBLIC_API_URL+'api/coverage/?exam_id='+chosenExam; 
+        const API_URL = env.PUBLIC_API_URL+'api/question/?exam_id='+chosenExam; 
         try {
             const res = await fetch(API_URL,{
                 method:'get',

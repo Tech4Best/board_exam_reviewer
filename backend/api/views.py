@@ -32,7 +32,6 @@ class SubjectViewSet(viewsets.ModelViewSet):
     serializer_class = SubjectSerializer
     permission_classes = [permissions.AllowAny]
 
-
     def get_queryset(self,):
         coverage_id = self.request.query_params.get('coverage_id',None)
         if coverage_id is not None:
@@ -47,6 +46,16 @@ class QuestionViewSet(viewsets.ModelViewSet):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
     permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self):
+        subject_id = self.request.query_params.get('subject_id',None)
+        if subject_id is not None:
+            try:
+                subjects = Subject.objects.get(pk=subject_id)
+                self.queryset = Question.objects.filter(subject=subjects)
+            except Exam.DoesNotExist:
+                self.queryset = Question.objects.none()
+        return self.queryset
 
 class OptionViewSet(viewsets.ModelViewSet):
     queryset = Option.objects.all()
