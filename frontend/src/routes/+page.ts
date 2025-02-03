@@ -1,7 +1,5 @@
-
-// +page.ts
 import type { PageLoad } from './$types';
-import { env } from '$env/dynamic/public'; // Import private environment variables
+import { env } from '$env/dynamic/public'; 
 import { redirect } from '@sveltejs/kit';
 import { fetchFromApi } from '$lib/api';
 
@@ -13,7 +11,7 @@ export const load: PageLoad = async ({ fetch }) => {
         return {
             exams: result.results,
         };
-    }else {
+    }else{
         redirect(302,'/home')
     }
 };
