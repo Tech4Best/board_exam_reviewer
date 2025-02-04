@@ -2,6 +2,10 @@
 	import { goto } from "$app/navigation";
 	import { Button } from "$lib/components/ui/button";
     import * as Select  from "$lib/components/ui/select";
+	// import { localDatabase } from "$lib/localstorage/index.svelte.js";
+    
+    
+    //localDatabase?.createObjectStore('')
 	//import type { PageProps } from './$types';
 
 	let { data } = $props();
@@ -37,7 +41,8 @@
                 </Select.Group>
             </Select.Content>
         </Select.Root>
+        <br />
         <Button onclick={saveItem}>
-            Save Item
+           Set up 
         </Button>
 </div>

@@ -19,6 +19,7 @@ class OptionSerializer(serializers.ModelSerializer):
 class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
+        depth = 5
         fields = '__all__'
 
 class SubjectSerializer(serializers.ModelSerializer):

@@ -3,10 +3,10 @@ import type { PageLoad } from './$types';
 import { fetchFromApi } from '$lib/api';
 
 export const load: PageLoad = async () => {
-    const chosenExam = localStorage.getItem("exam")
-    const API_URL = env.PUBLIC_API_URL+'api/question/?exam_id='+chosenExam; 
+    const exam_id= localStorage.getItem('exam');
+    const API_URL = env.PUBLIC_API_URL+'api/coverage/?exam_id='+exam_id
     const result = await fetchFromApi(API_URL)
     return {
-        exams: result.results,
+        coverages: result.results,
     }
 };

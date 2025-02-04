@@ -3,7 +3,7 @@ import { env } from '$env/dynamic/public';
 import { redirect } from '@sveltejs/kit';
 import { fetchFromApi } from '$lib/api';
 
-export const load: PageLoad = async ({ fetch }) => {
+export const load: PageLoad = async () => {
     const chosenExam = localStorage.getItem("exam")
     if(chosenExam === null || chosenExam === ""){
         const API_URL = env.PUBLIC_API_URL+'api/exam/'; 

@@ -51,8 +51,8 @@ class QuestionViewSet(viewsets.ModelViewSet):
         subject_id = self.request.query_params.get('subject_id',None)
         if subject_id is not None:
             try:
-                subjects = Subject.objects.get(pk=subject_id)
-                self.queryset = Question.objects.filter(subject=subjects)
+                subject = Subject.objects.get(pk=subject_id)
+                self.queryset = Question.objects.filter(subject=subject)
             except Exam.DoesNotExist:
                 self.queryset = Question.objects.none()
         return self.queryset
