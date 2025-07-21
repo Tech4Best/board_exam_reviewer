@@ -12,6 +12,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Question } from "@/types/types";
+import { useRouter } from "next/navigation";
 
 export type ExamScore = {
   examNumber: number;
@@ -20,6 +22,8 @@ export type ExamScore = {
   dateFinished: Date | null;
   status: "pending" | "completed" | "failed";
   examQuestions: number;
+  questions: Question[];
+  userAnswers: (string | null)[];
 };
 
 export const columns: ColumnDef<ExamScore>[] = [
@@ -62,6 +66,7 @@ export const columns: ColumnDef<ExamScore>[] = [
     id: "actions",
     cell: ({ row }) => {
       const examScore = row.original;
+      const router = useRouter();
 
       return (
         <DropdownMenu>
@@ -79,7 +84,13 @@ export const columns: ColumnDef<ExamScore>[] = [
               Copy Exam Number
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View Details</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                router.push(`/review-exam?data=${encodeURIComponent(JSON.stringify({ questions: examScore.questions, userAnswers: examScore.userAnswers }))}`);
+              }}
+            >
+              View Details
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

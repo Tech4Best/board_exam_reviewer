@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { questionBank } from "./data";
 import { Button } from "@/components/ui/button";
@@ -15,19 +15,59 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Question } from "@/types/types";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function Page() {
+  const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
   const [score, setScore] = useState(0);
-  const [userAnswers, setUserAnswers] = useState<(string | null)[]>(
-    Array(questionBank.length).fill(null)
-  );
+  const [userAnswers, setUserAnswers] = useState<(string | null)[]>([]);
   const router = useRouter();
 
-  const currentQuestion = questionBank[currentQuestionIndex];
-  const isLastQuestion = currentQuestionIndex === questionBank.length - 1;
+  useEffect(() => {
+    const shuffledQuestions = [...questionBank].sort(() => Math.random() - 0.5);
+    setQuestions(shuffledQuestions);
+    setUserAnswers(Array(shuffledQuestions.length).fill(null));
+  }, []);
+
+  if (questions.length === 0) {
+    return <div>Loading...</div>;
+  }
+
+  const currentQuestion = questions[currentQuestionIndex];
+  const isLastQuestion = currentQuestionIndex === questions.length - 1;
+
+  const handleEndExam = () => {
+    const examResult = {
+      examNumber: Date.now(),
+      score: score,
+      total: questions.length,
+      date: new Date().toISOString(),
+      dateStarted: new Date(),
+      dateFinished: new Date(),
+      status: "completed",
+      examQuestions: questions.length,
+    };
+
+    const existingScores = JSON.parse(localStorage.getItem("examScores") || "[]");
+    localStorage.setItem("examScores", JSON.stringify([...existingScores, examResult]));
+
+    sessionStorage.setItem("examReview", JSON.stringify({ questions: questions, userAnswers: userAnswers }));
+
+    router.push(`/results?score=${score}&total=${questions.length}`);
+  };
 
   const handleNextQuestion = () => {
     const newScore = selectedAnswer === currentQuestion.answer ? score + 1 : score;
@@ -43,12 +83,14 @@ export default function Page() {
       const examResult = {
         examNumber: Date.now(), // simple unique id
         score: newScore,
-        total: questionBank.length,
+        total: questions.length,
         date: new Date().toISOString(),
         dateStarted: new Date(),
         dateFinished: new Date(),
-        status: "completed",
-        examQuestions: questionBank.length,
+        status: "completed" as "completed",
+        examQuestions: questions.length,
+        questions: questions,
+        userAnswers: userAnswers,
       };
 
       const existingScores = JSON.parse(localStorage.getItem("examScores") || "[]");
@@ -56,9 +98,9 @@ export default function Page() {
 
       const finalAnswers = [...userAnswers];
       finalAnswers[currentQuestionIndex] = selectedAnswer;
-      sessionStorage.setItem("examReview", JSON.stringify({ questions: questionBank, userAnswers: finalAnswers }));
+      sessionStorage.setItem("examReview", JSON.stringify({ questions: questions, userAnswers: finalAnswers }));
 
-      router.push(`/results?score=${newScore}&total=${questionBank.length}`);
+      router.push(`/results?score=${newScore}&total=${questions.length}`);
     }
   };
 
@@ -96,7 +138,26 @@ export default function Page() {
             </div>
           )}
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex justify-between">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive">End Exam</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will end the exam and your score will be calculated based on the answers you have provided so far.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleEndExam}>
+                  End Exam
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
           <Button onClick={handleNextQuestion}>
             {isLastQuestion ? "Finish" : "Next"}
           </Button>
