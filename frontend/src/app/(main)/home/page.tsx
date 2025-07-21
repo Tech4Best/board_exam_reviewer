@@ -35,42 +35,50 @@ export default function Page({
   }, []);
 
   return <div>
-    <div className="flex flex-row gap-4 justify-between">
+    <div className="flex flex-row gap-4 justify-between items-center">
       <h1 className="text-2xl font-bold">Home</h1>
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button> Start Exam </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px] text-left">
-          <DialogHeader>
-            <DialogTitle>Exam Setup</DialogTitle>
-            <DialogDescription>
-              Let us know your preferred setup
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4">
-            <div className="grid gap-3">
-              <Label htmlFor="time">Duration (Minutes)</Label>
-              <Input id="time" name="time" type="number" defaultValue="60" />
+      <div className="flex gap-2">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button> Start Exam </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px] text-left">
+            <DialogHeader>
+              <DialogTitle>Exam Setup</DialogTitle>
+              <DialogDescription>
+                Let us know your preferred setup
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4">
+              <div className="grid gap-3">
+                <Label htmlFor="time">Duration (Minutes)</Label>
+                <Input id="time" name="time" type="number" defaultValue="60" />
+              </div>
+              <div className="grid gap-3">
+                <Label htmlFor="questions">Question Amount</Label>
+                <Input id="questions" name="questions" type="number" defaultValue="60" />
+              </div>
             </div>
-            <div className="grid gap-3">
-              <Label htmlFor="questions">Question Amount</Label>
-              <Input id="questions" name="questions" type="number" defaultValue="60" />
-            </div>
-          </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
-            <Button type="submit">Continue</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="outline">Cancel</Button>
+              </DialogClose>
+              <Button type="submit">Continue</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
     <div className="flex flex-col gap-4 mt-5">
       <div className="flex flex-row justify-between">
         <p className="text-lg font-semibold">Exam Scores</p>
         <Button size="sm" variant="link">View All</Button>
+        <Button size="sm" variant="destructive" onClick={() => {
+          localStorage.removeItem("examScores");
+          setExamScores([]);
+        }}>
+          Clear History
+        </Button>
       </div>
       <div className="grid grid-cols-1 gap-4">
         <DataTable columns={columns} data={examScores} />

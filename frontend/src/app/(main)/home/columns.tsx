@@ -16,7 +16,6 @@ import {
 export type ExamScore = {
   examNumber: number;
   score: number;
-  date: string;
   dateStarted: Date;
   dateFinished: Date | null;
   status: "pending" | "completed" | "failed";
@@ -32,8 +31,24 @@ export const columns: ColumnDef<ExamScore>[] = [
     },
   },
   {
-    accessorKey: "date",
+    accessorKey: "dateFinished",
     header: "Date",
+    cell: ({ row }) => {
+      const { dateFinished } = row.original;
+      if (dateFinished != null) {
+        const date = new Date(dateFinished);
+        if (!isNaN(date.getTime())) {
+          const formatter = new Intl.DateTimeFormat("en-US", {
+            dateStyle: "short",
+          });
+          const formattedDate = formatter.format(date);
+          return <div>{formattedDate}</div>;
+        } else {
+          return <div>Invalid date</div>;
+        }
+      }
+      return <div>Unfinished</div>;
+    },
   },
   {
     accessorKey: "score",
