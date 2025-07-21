@@ -86,7 +86,7 @@ export const columns: ColumnDef<ExamScore>[] = [
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => {
-                router.push(`/review-exam?data=${encodeURIComponent(JSON.stringify({ questions: examScore.questions, userAnswers: examScore.userAnswers }))}`);
+                router.push(`/review-exam?id=${examScore.examNumber}`);
               }}
             >
               View Details

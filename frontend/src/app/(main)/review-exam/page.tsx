@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Question } from "@/types/types";
+import { ExamScore } from "../home/columns";
 import {
   Card,
   CardContent,
@@ -15,18 +15,18 @@ import { Separator } from "@/components/ui/separator";
 
 export default function Page() {
   const searchParams = useSearchParams();
-  const examData = searchParams.get("data");
-  const [reviewData, setReviewData] = useState<{
-    questions: Question[];
-    userAnswers: (string | null)[];
-  } | null>(null);
+  const examId = searchParams.get("id");
+  const [reviewData, setReviewData] = useState<ExamScore | null>(null);
 
   useEffect(() => {
-    if (examData) {
-      setReviewData(JSON.parse(examData));
+    if (examId) {
+      const allScores = JSON.parse(localStorage.getItem("examScores") || "[]");
+      const examToReview = allScores.find(
+        (score: ExamScore) => String(score.examNumber) === examId
+      );
+      setReviewData(examToReview || null);
     }
-    console.log(examData)
-  }, [examData]);
+  }, [examId]);
 
   return (
     <div className="flex justify-center items-center h-full">

@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export default function Page() {
+  const [isClient, setIsClient] = useState(false);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -37,12 +38,13 @@ export default function Page() {
   const router = useRouter();
 
   useEffect(() => {
+    setIsClient(true);
     const shuffledQuestions = [...questionBank].sort(() => Math.random() - 0.5);
     setQuestions(shuffledQuestions);
     setUserAnswers(Array(shuffledQuestions.length).fill(null));
   }, []);
 
-  if (questions.length === 0) {
+  if (!isClient || questions.length === 0) {
     return <div>Loading...</div>;
   }
 
