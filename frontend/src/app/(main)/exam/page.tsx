@@ -27,91 +27,104 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
+interface ActiveExam {
+  id: number;
+  questions: Question[];
+  userAnswers: (string | null)[];
+  currentQuestionIndex: number;
+  startTime: string;
+}
+
 export default function Page() {
-  const [isClient, setIsClient] = useState(false);
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [activeExam, setActiveExam] = useState<ActiveExam | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [showExplanation, setShowExplanation] = useState(false);
-  const [score, setScore] = useState(0);
-  const [userAnswers, setUserAnswers] = useState<(string | null)[]>([]);
   const router = useRouter();
 
   useEffect(() => {
-    setIsClient(true);
-    const shuffledQuestions = [...questionBank].sort(() => Math.random() - 0.5);
-    setQuestions(shuffledQuestions);
-    setUserAnswers(Array(shuffledQuestions.length).fill(null));
+    const existingExam = localStorage.getItem("activeExam");
+    if (existingExam) {
+      const parsedExam: ActiveExam = JSON.parse(existingExam);
+      setActiveExam(parsedExam);
+      setSelectedAnswer(parsedExam.userAnswers[parsedExam.currentQuestionIndex]);
+    } else {
+      const shuffledQuestions = [...questionBank].sort(() => Math.random() - 0.5);
+      const newExam: ActiveExam = {
+        id: Date.now(),
+        questions: shuffledQuestions,
+        userAnswers: Array(shuffledQuestions.length).fill(null),
+        currentQuestionIndex: 0,
+        startTime: new Date().toISOString(),
+      };
+      localStorage.setItem("activeExam", JSON.stringify(newExam));
+      setActiveExam(newExam);
+    }
   }, []);
 
-  if (!isClient || questions.length === 0) {
-    return <div>Loading...</div>;
+  useEffect(() => {
+    if (activeExam) {
+      localStorage.setItem("activeExam", JSON.stringify(activeExam));
+    }
+  }, [activeExam]);
+
+  if (!activeExam) {
+    return <div>Loading exam...</div>;
   }
 
+  const { questions, userAnswers, currentQuestionIndex } = activeExam;
   const currentQuestion = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
 
-  const handleEndExam = () => {
+  const finalizeExam = () => {
+    let finalScore = 0;
+    for (let i = 0; i < questions.length; i++) {
+      if (userAnswers[i] === questions[i].answer) {
+        finalScore++;
+      }
+    }
+
     const examResult = {
-      examNumber: Date.now(),
-      score: score,
+      examNumber: activeExam.id,
+      score: finalScore,
       total: questions.length,
       date: new Date().toISOString(),
-      dateStarted: new Date(),
+      dateStarted: new Date(activeExam.startTime),
       dateFinished: new Date(),
-      status: "completed",
+      status: "completed" as "completed",
       examQuestions: questions.length,
+      questions: questions,
+      userAnswers: userAnswers,
     };
 
     const existingScores = JSON.parse(localStorage.getItem("examScores") || "[]");
     localStorage.setItem("examScores", JSON.stringify([...existingScores, examResult]));
-
+    
     sessionStorage.setItem("examReview", JSON.stringify({ questions: questions, userAnswers: userAnswers }));
+    localStorage.removeItem("activeExam");
 
-    router.push(`/results?score=${score}&total=${questions.length}`);
+    router.push(`/results?score=${finalScore}&total=${questions.length}`);
   };
-
+  
   const handleNextQuestion = () => {
-    const newScore = selectedAnswer === currentQuestion.answer ? score + 1 : score;
-    if (selectedAnswer === currentQuestion.answer) {
-      setScore(newScore);
-    }
-
-    if (!isLastQuestion) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-      setSelectedAnswer(null);
-      setShowExplanation(false);
+    if (isLastQuestion) {
+      finalizeExam();
     } else {
-      const examResult = {
-        examNumber: Date.now(), // simple unique id
-        score: newScore,
-        total: questions.length,
-        date: new Date().toISOString(),
-        dateStarted: new Date(),
-        dateFinished: new Date(),
-        status: "completed" as "completed",
-        examQuestions: questions.length,
-        questions: questions,
-        userAnswers: userAnswers,
-      };
-
-      const existingScores = JSON.parse(localStorage.getItem("examScores") || "[]");
-      localStorage.setItem("examScores", JSON.stringify([...existingScores, examResult]));
-
-      const finalAnswers = [...userAnswers];
-      finalAnswers[currentQuestionIndex] = selectedAnswer;
-      sessionStorage.setItem("examReview", JSON.stringify({ questions: questions, userAnswers: finalAnswers }));
-
-      router.push(`/results?score=${newScore}&total=${questions.length}`);
+      setActiveExam((prev) => {
+        if (!prev) return null;
+        const nextIndex = prev.currentQuestionIndex + 1;
+        setSelectedAnswer(prev.userAnswers[nextIndex]);
+        return { ...prev, currentQuestionIndex: nextIndex };
+      });
     }
   };
 
   const handleAnswerSelect = (answerId: string) => {
     setSelectedAnswer(answerId);
-    setShowExplanation(true);
-    const newUserAnswers = [...userAnswers];
-    newUserAnswers[currentQuestionIndex] = answerId;
-    setUserAnswers(newUserAnswers);
+    setActiveExam((prev) => {
+      if (!prev) return null;
+      const newUserAnswers = [...prev.userAnswers];
+      newUserAnswers[prev.currentQuestionIndex] = answerId;
+      return { ...prev, userAnswers: newUserAnswers };
+    });
   };
 
   return (
@@ -133,12 +146,6 @@ export default function Page() {
               </div>
             ))}
           </RadioGroup>
-          {showExplanation && (
-            <div className="mt-4 p-4 bg-muted rounded-md">
-              <h3 className="font-bold">Explanation</h3>
-              <p>{currentQuestion.explanation}</p>
-            </div>
-          )}
         </CardContent>
         <CardFooter className="flex justify-between">
           <AlertDialog>
@@ -154,7 +161,7 @@ export default function Page() {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleEndExam}>
+                <AlertDialogAction onClick={finalizeExam}>
                   End Exam
                 </AlertDialogAction>
               </AlertDialogFooter>
