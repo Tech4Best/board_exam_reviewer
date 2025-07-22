@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { questionBank } from "./data";
+import { exams, Exam, Subject } from "./exams";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -29,6 +29,8 @@ import {
 
 interface ActiveExam {
   id: number;
+  examId: string;
+  subjectId: string;
   questions: Question[];
   userAnswers: (string | null)[];
   currentQuestionIndex: number;
@@ -36,6 +38,11 @@ interface ActiveExam {
 }
 
 export default function Page() {
+  const [step, setStep] = useState<"subject" | "questions" | "loading">(
+    "loading",
+  );
+  const [selectedExamId, setSelectedExamId] = useState<string | null>(null);
+  const [selectedSubjectId, setSelectedSubjectId] = useState<string>("");
   const [activeExam, setActiveExam] = useState<ActiveExam | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const router = useRouter();
@@ -45,11 +52,47 @@ export default function Page() {
     if (existingExam) {
       const parsedExam: ActiveExam = JSON.parse(existingExam);
       setActiveExam(parsedExam);
-      setSelectedAnswer(parsedExam.userAnswers[parsedExam.currentQuestionIndex]);
+      setSelectedExamId(parsedExam.examId);
+      setSelectedSubjectId(parsedExam.subjectId);
+      setStep("questions");
+      setSelectedAnswer(
+        parsedExam.userAnswers[parsedExam.currentQuestionIndex],
+      );
     } else {
-      const shuffledQuestions = [...questionBank].sort(() => Math.random() - 0.5);
+      const storedExamId = localStorage.getItem("selectedExam");
+      if (storedExamId) {
+        setSelectedExamId(storedExamId);
+        setStep("subject");
+      } else {
+        router.push("/settings");
+      }
+    }
+  }, [router]);
+
+  const handleSubjectSelect = (subjectId: string) => {
+    if (!selectedExamId) return;
+
+    setSelectedSubjectId(subjectId);
+    setStep("questions");
+    const exam = exams.find((e) => e.id === selectedExamId);
+    if (!exam) return;
+
+    let questions: Question[] = [];
+    if (subjectId === "all-subjects") {
+      questions = exam.subjects.flatMap((s) => s.questions);
+    } else {
+      const subject = exam.subjects.find((s) => s.id === subjectId);
+      if (subject) {
+        questions = subject.questions;
+      }
+    }
+
+    if (questions.length > 0) {
+      const shuffledQuestions = [...questions].sort(() => Math.random() - 0.5);
       const newExam: ActiveExam = {
         id: Date.now(),
+        examId: exam.id,
+        subjectId: subjectId,
         questions: shuffledQuestions,
         userAnswers: Array(shuffledQuestions.length).fill(null),
         currentQuestionIndex: 0,
@@ -58,13 +101,51 @@ export default function Page() {
       localStorage.setItem("activeExam", JSON.stringify(newExam));
       setActiveExam(newExam);
     }
-  }, []);
+  };
 
   useEffect(() => {
     if (activeExam) {
       localStorage.setItem("activeExam", JSON.stringify(activeExam));
     }
   }, [activeExam]);
+
+  if (step === "loading") {
+    return <div>Loading...</div>;
+  }
+
+  if (step === "subject") {
+    const exam = exams.find((e) => e.id === selectedExamId);
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle>Select Subject</CardTitle>
+            <CardDescription>{exam?.name}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              onValueChange={handleSubjectSelect}
+              value={selectedSubjectId}
+            >
+              <div className="flex items-center space-x-2 mb-2">
+                <RadioGroupItem value="all-subjects" id="all-subjects" />
+                <Label htmlFor="all-subjects">All Subjects</Label>
+              </div>
+              {exam?.subjects.map((subject) => (
+                <div
+                  key={subject.id}
+                  className="flex items-center space-x-2 mb-2"
+                >
+                  <RadioGroupItem value={subject.id} id={subject.id} />
+                  <Label htmlFor={subject.id}>{subject.name}</Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   if (!activeExam) {
     return <div>Loading exam...</div>;
@@ -93,17 +174,25 @@ export default function Page() {
       examQuestions: questions.length,
       questions: questions,
       userAnswers: userAnswers,
+      examId: activeExam.examId,
+      subjectId: activeExam.subjectId,
     };
 
-    const existingScores = JSON.parse(localStorage.getItem("examScores") || "[]");
-    localStorage.setItem("examScores", JSON.stringify([...existingScores, examResult]));
-    
-    sessionStorage.setItem("examReview", JSON.stringify({ questions: questions, userAnswers: userAnswers }));
+    const existingScores = JSON.parse(
+      localStorage.getItem("examScores") || "[]",
+    );
+    localStorage.setItem(
+      "examScores",
+      JSON.stringify([...existingScores, examResult]),
+    );
+    sessionStorage.setItem(
+      "examReview",
+      JSON.stringify({ questions: questions, userAnswers: userAnswers }),
+    );
     localStorage.removeItem("activeExam");
-
     router.push(`/results?score=${finalScore}&total=${questions.length}`);
   };
-  
+
   const handleNextQuestion = () => {
     if (isLastQuestion) {
       finalizeExam();
@@ -156,7 +245,8 @@ export default function Page() {
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This will end the exam and your score will be calculated based on the answers you have provided so far.
+                  This will end the exam and your score will be calculated based
+                  on the answers you have provided so far.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -174,4 +264,4 @@ export default function Page() {
       </Card>
     </div>
   );
-} 
+}

@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 
 const links = [
   { name: "Home", href: "/home", icon: Home },
-  { name: "Exam", href: "/exam", icon: BookOpen },
   { name: "Scores", href: "/scores", icon: CheckCircle2 },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
@@ -27,7 +26,7 @@ export function BottomNav() {
               href={link.href}
               className={cn(
                 "flex flex-col items-center p-2 text-xs",
-                isActive ? "text-primary" : "text-muted-foreground"
+                isActive ? "text-primary" : "text-muted-foreground",
               )}
             >
               <LinkIcon className="h-6 w-6" />
@@ -38,4 +37,4 @@ export function BottomNav() {
       </div>
     </nav>
   );
-} 
+}

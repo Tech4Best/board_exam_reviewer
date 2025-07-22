@@ -1,88 +1,70 @@
-"use client"
-import { Button } from "@/components/ui/button"
-import { useState, useEffect } from "react"
-import { columns, ExamScore } from "./columns"
-import { DataTable } from "./data-table"
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+"use client";
 
+import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
+import { columns, ExamScore } from "./columns";
+import { DataTable } from "./data-table";
+import { useRouter } from "next/navigation";
+import { exams } from "../exam/exams";
 
-export default function Page({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ slug: string }>
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
-}) {
-
-  const [examScores, setExamScores] = useState<ExamScore[]>([])
+export default function Page() {
+  const [filteredScores, setFilteredScores] = useState<ExamScore[]>([]);
+  const [selectedExamName, setSelectedExamName] = useState<string>("");
+  const router = useRouter();
 
   useEffect(() => {
+    const selectedExamId = localStorage.getItem("selectedExam");
+
+    if (!selectedExamId) {
+      router.push("/settings");
+      return;
+    }
+
+    const exam = exams.find((e) => e.id === selectedExamId);
+    setSelectedExamName(exam ? exam.name : "Selected Exam");
+
     const storedScores = localStorage.getItem("examScores");
     if (storedScores) {
-      setExamScores(JSON.parse(storedScores));
+      const allScores: ExamScore[] = JSON.parse(storedScores);
+      const scoresForSelectedExam = allScores.filter(
+        (score) => score.examId === selectedExamId,
+      );
+      setFilteredScores(scoresForSelectedExam);
     }
-  }, []);
+  }, [router]);
 
-  return <div>
-    <div className="flex flex-row gap-4 justify-between items-center">
-      <h1 className="text-2xl font-bold">Home</h1>
-      <div className="flex gap-2">
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button> Start Exam </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px] text-left">
-            <DialogHeader>
-              <DialogTitle>Exam Setup</DialogTitle>
-              <DialogDescription>
-                Let us know your preferred setup
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4">
-              <div className="grid gap-3">
-                <Label htmlFor="time">Duration (Minutes)</Label>
-                <Input id="time" name="time" type="number" defaultValue="60" />
-              </div>
-              <div className="grid gap-3">
-                <Label htmlFor="questions">Question Amount</Label>
-                <Input id="questions" name="questions" type="number" defaultValue="60" />
-              </div>
-            </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline">Cancel</Button>
-              </DialogClose>
-              <Button type="submit">Continue</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+  const handleClearHistory = () => {
+    const selectedExamId = localStorage.getItem("selectedExam");
+    const storedScores = localStorage.getItem("examScores");
+    if (storedScores && selectedExamId) {
+      const allScores: ExamScore[] = JSON.parse(storedScores);
+      const remainingScores = allScores.filter(
+        (score) => score.examId !== selectedExamId,
+      );
+      localStorage.setItem("examScores", JSON.stringify(remainingScores));
+      setFilteredScores([]);
+    }
+  };
+
+  return (
+    <div>
+      <div className="flex flex-row gap-4 justify-between items-center">
+        <h1 className="text-2xl font-bold">Home</h1>
+        <div className="flex gap-2">
+          <Button onClick={() => router.push("/exam")}>Start Exam</Button>
+        </div>
+      </div>
+      <div className="flex flex-col gap-4 mt-5">
+        <div className="flex flex-row justify-between items-center">
+          <p className="text-lg font-semibold">Scores for {selectedExamName}</p>
+          <Button size="sm" variant="destructive" onClick={handleClearHistory}>
+            Clear History for {selectedExamName}
+          </Button>
+        </div>
+        <div className="grid grid-cols-1 gap-4">
+          <DataTable columns={columns} data={filteredScores} />
+        </div>
       </div>
     </div>
-    <div className="flex flex-col gap-4 mt-5">
-      <div className="flex flex-row justify-between">
-        <p className="text-lg font-semibold">Exam Scores</p>
-        <Button size="sm" variant="link">View All</Button>
-        <Button size="sm" variant="destructive" onClick={() => {
-          localStorage.removeItem("examScores");
-          setExamScores([]);
-        }}>
-          Clear History
-        </Button>
-      </div>
-      <div className="grid grid-cols-1 gap-4">
-        <DataTable columns={columns} data={examScores} />
-      </div>
-    </div>
-  </div >
+  );
 }
